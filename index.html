@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Today’s Best Offers</title>
+
+<style>
+    body {
+        margin: 0;
+        font-family: "Poppins", sans-serif;
+        background: #f5f5f5;
+    }
+
+    header {
+        width: auto;
+        padding: 20px;
+        background: linear-gradient(90deg, #ff6a00, #ee0979);
+        color: white;
+        font-size: 28px;
+        font-weight: 700;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .layout {
+        display: flex;
+        width: 100%;
+        min-height: 100vh;
+        padding: 10px;
+        gap: 10px;
+        box-sizing: border-box;
+        flex-wrap: nowrap;
+    }
+
+    .sidebar, .rightbar {
+        width: 15%;
+        min-width: 180px;
+        background: #fff;
+        padding: 20px 12px;
+        border-radius: 16px;
+        overflow-y: auto;
+        max-height: calc(100vh - 80px);
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        font-size: 13px;
+    }
+
+    .pill {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 16px;
+        margin: 10px 0;
+        border-radius: 40px;
+        background: white;
+        cursor: pointer;
+        font-weight: 600;
+        transition: 0.3s;
+        text-decoration: none;
+        color: black;
+        font-size: 12px;
+    }
+
+    .pill:hover {
+        background: #e4e4e4;
+    }
+
+    .pill img {
+        width: 24px;
+        height: 24px;
+        border-radius: 6px;
+    }
+
+    .content {
+        width: 70%;
+        min-width: 250px;
+        padding: 20px;
+        border-radius: 20px;
+        background: #fff;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+        flex-grow: 1;
+    }
+
+    .searchBox {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+
+    #searchInput {
+        width: 90%;
+        padding: 12px 18px;
+        border-radius: 40px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 20px;
+    }
+
+    .card {
+        display: flex;
+        flex-direction: column;
+        background: #fff;
+        border-radius: 16px;
+        overflow: hidden;
+        text-decoration: none;
+        color: black;
+        transition: 0.3s;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+    }
+
+    .card img {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+        loading: lazy;
+    }
+
+    .card-body {
+        padding: 12px 15px;
+    }
+
+    .title {
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 6px;
+    }
+
+    .price {
+        font-size: 12px;
+        font-weight: 600;
+        color: #2ecc71;
+    }
+
+    .discount {
+        color: #e74c3c;
+        font-size: 14px;
+    }
+
+    .btn {
+        padding: 10px 0px;
+        background: linear-gradient(90deg, #ff6a00, #ee0979);
+        color: #fff;
+        border-radius: 8px;
+        text-decoration: none;
+        display: inline-block;
+        margin-top: 10px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .pagination {
+        text-align: center;
+        padding: 20px;
+    }
+
+    .pagination button {
+        padding: 8px 14px;
+        margin: 0 4px;
+        border: none;
+        border-radius: 8px;
+        background: #333;
+        color: #fff;
+        cursor: pointer;
+    }
+
+    #loading {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 300px;
+        font-size: 18px;
+        color: #555;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .spinner {
+        border: 5px solid #f3f3f3;
+        border-top: 5px solid #3498db;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 1024px) {
+        .layout { flex-direction: column; gap: 10px; }
+
+        .content { width: 100% !important; order: 1; }
+
+        .sidebar, .rightbar { display: none; }
+
+        #mergedPanel {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            background: #fff;
+            padding: 15px;
+            border-radius: 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            width: 100%;
+            order: 2;
+        }
+
+        #mergedPanel .pill {
+            flex: 1 1 calc(50% - 10px);
+            margin: 0;
+        }
+
+        #searchInput { width: 100%; }
+
+        .grid {
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<header>🔥 Today’s Best Offers</header>
+
+<div class="layout">
+
+    <div class="sidebar">
+        <a class="pill" href="#"><img src="https://logo.clearbit.com/amazon.in">Amazon</a>
+        <a class="pill" href="#"><img src="https://logo.clearbit.com/flipkart.com">Flipkart</a>
+        <a class="pill" href="#"><img src="https://logo.clearbit.com/meesho.com">Meesho</a>
+        <a class="pill" href="#"><img src="https://logo.clearbit.com/myntra.com">Myntra</a>
+        <a class="pill" href="#"><img src="https://logo.clearbit.com/snapdeal.com">Snapdeal</a>
+        <a class="pill" href="#"><img src="https://logo.clearbit.com/tatacliq.com">TataCliq</a>
+        <a class="pill" href="#"><img src="https://logo.clearbit.com/ajio.com">Ajio</a>
+        <a class="pill" href="#"><img src="https://logo.clearbit.com/nykaa.com">Nykaa</a>
+        <a class="pill" href="#"><img src="https://logo.clearbit.com/purplle.com">Purplle</a>
+        <a class="pill" href="#"><img src="https://logo.clearbit.com/bigbasket.com">BigBasket</a>
+    </div>
+
+    <div class="content">
+        <div class="searchBox">
+            <input type="text" id="searchInput" placeholder="Search offers...">
+        </div>
+
+        <div id="loading">
+            <div class="spinner"></div>
+            Loading offers...
+        </div>
+
+        <div id="grid" class="grid" style="display:none;"></div>
+
+        <div class="pagination">
+            <button onclick="prevPage()">Prev</button>
+            <span id="pageNumber"></span>
+            <button onclick="nextPage()">Next</button>
+        </div>
+    </div>
+
+    <div class="rightbar">
+        <a class="pill" href="#"><img src="https://logo.clearbit.com/swiggy.com">Swiggy</a>
+        <a class="pill" href="#"><img src="https://logo.clearbit.com/zomato.com">Zomato</a>
+        <a class="pill" href="#"><img src="https://logo.clearbit.com/ubereats.com">UberEats</a>
+        <a class="pill" href="#"><img src="https://logo.clearbit.com/dominos.co.in">Domino’s</a>
+        <a class="pill" href="#"><img src="https://logo.clearbit.com/foodpanda.com">FoodPanda</a>
+        <a class="pill" href="#"><img src="https://logo.clearbit.com/makemytrip.com">MakeMyTrip</a>
+        <a class="pill" href="#"><img src="https://logo.clearbit.com/booking.com">Booking.com</a>
+        <a class="pill" href="#"><img src="https://logo.clearbit.com/goibibo.com">Goibibo</a>
+        <a class="pill" href="#"><img src="https://logo.clearbit.com/yatra.com">Yatra</a>
+    </div>
+
+</div>
+
+<div id="mergedPanel" style="display:none;"></div>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbzQmZMbBQc6ChYGmhcLNeQmsSmYX1U4XBXOTc0vcrLAmXLa3XAWdnOvZowmCzW0tNAZjg/exec";
+
+let offers = [];
+let currentPage = 1;
+const itemsPerPage = 8;
+
+/* 🔥 ALWAYS FORCE REFRESH ON PAGE LOAD */
+window.addEventListener("load", async () => {
+    console.log("🔄 Force Refresh Enabled");
+    await loadOffers(true);  
+});
+
+/* MAIN LOADER */
+async function loadOffers(forceRefresh = false) {
+    document.getElementById("loading").style.display = "flex";
+    document.getElementById("grid").style.display = "none";
+
+    if (forceRefresh) {
+        localStorage.removeItem("offers_cache");
+        console.log("🗑 Cache cleared for fresh data");
+    }
+
+    try {
+        const res = await fetch(API_URL);
+        offers = await res.json();
+        localStorage.setItem("offers_cache", JSON.stringify(offers));
+        localStorage.setItem("offers_cache_time", Date.now());
+    } catch (e) {
+        console.error("❌ Error fetching:", e);
+    }
+
+    document.getElementById("loading").style.display = "none";
+    document.getElementById("grid").style.display = "grid";
+    render();
+}
+
+function render() {
+    let filtered = [...offers];
+    const search = document.getElementById("searchInput").value.toLowerCase();
+
+    if (search) {
+        filtered = filtered.filter(x => x.title.toLowerCase().includes(search));
+    }
+
+    const start = (currentPage - 1) * itemsPerPage;
+    const paginated = filtered.slice(start, start + itemsPerPage);
+
+    document.getElementById("grid").innerHTML = paginated.map(item => `
+        <div class="card">
+            <img src="${item.image}" loading="lazy"/>
+            <div class="card-body">
+                <div class="title">${item.title}</div>
+                <div class="price">${item.price}</div>
+                <div class="discount">${item.discount}</div>
+                <a class="btn" href="${item.link}" target="_blank">Grab Deal</a>
+            </div>
+        </div>
+    `).join("");
+
+    document.getElementById("pageNumber").innerText = `Page ${currentPage}`;
+}
+
+function nextPage() { currentPage++; render(); }
+function prevPage() { if (currentPage > 1) currentPage--; render(); }
+
+let debounceTimer;
+document.getElementById("searchInput").addEventListener("input", () => {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+        currentPage = 1;
+        render();
+    }, 300);
+});
+
+function buildMergedPanel() {
+    const left = document.querySelectorAll(".sidebar .pill");
+    const right = document.querySelectorAll(".rightbar .pill");
+    const merged = document.getElementById("mergedPanel");
+
+    merged.innerHTML = "";
+    [...left, ...right].forEach(p =>
+        merged.appendChild(p.cloneNode(true))
+    );
+
+    merged.style.display = "flex";
+}
+
+if (window.innerWidth <= 1024) {
+    buildMergedPanel();
+}
+</script>
+
+</body>
+</html>
