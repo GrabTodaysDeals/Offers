@@ -7,6 +7,8 @@
 
 <style>
 
+
+
 /* Hide horizontal scrollbar */
 .category-list {
     scrollbar-width: none;     /* Firefox */
@@ -288,6 +290,14 @@ text-align: center;
 .nav-btn:hover {
     background: rgba(0, 0, 0, 0.7);
 }
+html, body {
+    max-width: 100%;
+    overflow-x: hidden !important;
+}
+
+* {
+    box-sizing: border-box;
+}
 
 </style>
 </head>
@@ -359,7 +369,7 @@ const API_URL = "https://script.google.com/macros/s/AKfycbzQmZMbBQc6ChYGmhcLNeQm
 
 let offers = [];
 let currentPage = 1;
-const itemsPerPage = 8;
+const itemsPerPage = 12;
 
 window.onload = async () => loadOffers();
 
