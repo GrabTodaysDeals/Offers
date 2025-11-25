@@ -44,10 +44,10 @@
 
     header {
         width: auto;
-        padding: 20px;
+        padding: 8px 10px;  
         background: linear-gradient(90deg, white, black	);
         color: black;
-        font-size: 28px;
+        font-size: 20px;
         font-weight: 700;
         position: sticky;
         top: 0;
@@ -64,6 +64,84 @@
         padding: 10px;
         box-sizing: border-box;
     }
+
+/* Subscribe Button */
+.subscribe-launch-box {
+    text-align: center;
+    padding: 15px;
+}
+.sub-launch-btn {
+    padding: 12px 18px;
+    background: linear-gradient(90deg, #ff6a00, #ee0979);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+/* Popup Modal Background */
+.modal {
+    display: none;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    justify-content: center;
+    align-items: center;
+    z-index: 5000;
+}
+
+/* Popup Content */
+.modal-content {
+    background: white;
+    padding: 25px;
+    border-radius: 14px;
+    width: 90%;
+    max-width: 360px;
+    text-align: center;
+    animation: popIn 0.3s ease-out;
+}
+
+/* Animation */
+@keyframes popIn {
+    from { transform: scale(0.7); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+/* Close Button */
+.close-btn {
+    float: right;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/* Popup Inputs */
+.modal-content input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    font-size: 15px;
+    border: 1px solid #bbb;
+    border-radius: 8px;
+}
+
+/* Submit Button */
+.popup-submit {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(90deg, #ff6a00, #ee0979);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
 
     /* BOTTOM BAR (merged both sidebars) */
     .bottom-bar {
@@ -212,7 +290,7 @@
 
 .top-ticker-container {
     width: 100%;
-    background: red;
+    background: orange;
     overflow: hidden;            /* keeps movement inside box */
     padding: 10px 0;
     position: sticky;
@@ -227,10 +305,10 @@ text-align: center;
 .top-ticker {
     display: inline-block;
     white-space: nowrap;
-    color: #fff;
+    color: black;
     font-size: 15px;
     font-weight: 600;
-    animation: bounce 10s ease-in-out infinite;
+    animation: bounce 20s ease-in-out infinite;
 }
 
 /* Back and forth animation */
@@ -309,6 +387,11 @@ html, body {
     <div class="header-search">
         <input type="text" id="topSearch" placeholder="Search products...">
     </div>
+
+<!-- SUBSCRIBE BUTTON -->
+<div class="subscribe-launch-box">
+    <button class="sub-launch-btn" onclick="openSubscribe()">Subscribe</button>
+</div>
 </header>
 
 <div class="layout">
@@ -530,7 +613,74 @@ function resetAutoSlide() {
 
 loadFullWidthSlider();
 
-</script>
+function openSubscribe() {
+    document.getElementById("subscribeModal").style.display = "flex";
+}
 
+function closeSubscribe() {
+    document.getElementById("subscribeModal").style.display = "none";
+}
+
+function submitSubscribe() {
+    const email = document.getElementById("popupEmail").value.trim();
+    const mobile = document.getElementById("popupMobile").value.trim();
+
+    if (!email.includes("@")) {
+        alert("Enter a valid email");
+        return;
+    }
+    if (!/^[0-9]{10}$/.test(mobile)) {
+        alert("Enter a valid 10-digit mobile number");
+        return;
+    }
+
+    alert("Subscription successful!");
+    closeSubscribe();
+}
+
+const SUBSCRIBE_API = "https://script.google.com/macros/s/AKfycbxdzkBdlY2EWha9eRd6x7Wa3DfV_mJtkVSoBJ-GP_RpyEKXU8YdPd1JmlQboxwPmRYa/exec";
+
+async function submitSubscribe() {
+    const email = document.getElementById("popupEmail").value.trim();
+    const mobile = document.getElementById("popupMobile").value.trim();
+
+    if (!email.includes("@")) {
+        alert("Enter a valid email");
+        return;
+    }
+    if (!/^[0-9]{10}$/.test(mobile)) {
+        alert("Enter a valid 10-digit mobile number");
+        return;
+    }
+
+    // Send to Google Sheet
+    const response = await fetch(SUBSCRIBE_API, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, mobile })
+    });
+
+    alert("Subscription saved!");
+    closeSubscribe();
+
+    document.getElementById("popupEmail").value = "";
+    document.getElementById("popupMobile").value = "";
+}
+
+</script>
+<div id="subscribeModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeSubscribe()">×</span>
+
+        <h2>Subscribe for Best Deals</h2>
+
+        <input type="email" id="popupEmail" placeholder="Enter your email">
+
+        <input type="tel" id="popupMobile" placeholder="Enter mobile number" maxlength="10">
+
+        <button class="popup-submit" onclick="submitSubscribe()">Submit</button>
+    </div>
+</div>
 </body>
 </html>
