@@ -2,685 +2,519 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Today’s Best Offers</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>DealHunter | Best Offers</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
+    :root {
+        --primary: #ff4757;
+        --orange-btn: linear-gradient(90deg, #ff9f43, #ee5a24);
+        --bg: #f4f6f8;
+        --text-dark: #2d3436;
+        --radius: 12px;
+        --header-height: 70px;
+    }
 
-
-
-/* Hide horizontal scrollbar */
-.category-list {
-    scrollbar-width: none;     /* Firefox */
-}
-
-.category-list::-webkit-scrollbar {
-    display: none;             /* Chrome, Safari */
-}
-.category-list {
-    -webkit-overflow-scrolling: touch;
-    scroll-behavior: smooth;
-}
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    
     body {
-        margin: 0;
-        font-family: "Poppins", sans-serif;
-        background: #f5f5f5;
-	overflow-x: hidden;
+        margin: 0; font-family: 'Inter', sans-serif;
+        background: var(--bg); color: var(--text-dark);
+        padding-top: var(--header-height); overflow-x: hidden;
+        display: flex; flex-direction: column; min-height: 100vh;
     }
 
-.header-search {
-    margin-left: auto;
-    margin-right: 10px;
-}
-
-.header-search input {
-    padding: 10px 16px;
-    border-radius: 30px;
-    border: none;
-    outline: none;
-    font-size: 15px;
-    width: 200px;
-}
-
+    /* --- Header --- */
     header {
-        width: auto;
-        padding: 8px 10px;  
-        background: linear-gradient(90deg, white, black	);
-        color: black;
-        font-size: 20px;
-        font-weight: 700;
-        position: sticky;
-        top: 0;
-        z-index: 1000;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        position: fixed; top: 0; left: 0; width: 100%; height: var(--header-height);
+        background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(0,0,0,0.05); display: flex;
+        align-items: center; justify-content: space-between; padding: 0 20px;
+        z-index: 1000; box-shadow: 0 4px 20px rgba(0,0,0,0.03);
     }
+    .logo { font-size: 24px; font-weight: 800; background: linear-gradient(45deg, #ff4757, #ff6b81); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-decoration: none; letter-spacing: -0.5px; }
 
-    .layout {
+    /* 10. DECORATIVE BLOBS */
+    .blob { position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.4; z-index: -1; pointer-events: none; }
+    .blob-1 { width: 500px; height: 500px; background: radial-gradient(circle, #6aa8ff, transparent); top: -200px; left: -100px; }
+    .blob-2 { width: 400px; height: 400px; background: radial-gradient(circle, #00e0ff, transparent); bottom: 10%; right: -100px; }
+
+    
+    /* Search */
+    .search-container { flex-grow: 1; max-width: 500px; margin: 0 20px; position: relative; display: none; }
+    @media(min-width: 768px) { .search-container { display: block; } }
+    .search-input { width: 100%; padding: 12px 20px 12px 45px; border-radius: 50px; border: 1px solid #e1e1e1; background: #f8f9fa; font-size: 15px; outline: none; transition: 0.3s; }
+    .search-input:focus { background: #fff; border-color: var(--primary); box-shadow: 0 0 0 4px rgba(255, 71, 87, 0.1); }
+    .search-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #aaa; font-size: 18px; }
+
+    .sub-btn { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 50px; font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 14px; box-shadow: 0 4px 12px rgba(255, 71, 87, 0.25); }
+    .sub-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(255, 71, 87, 0.35); }
+
+    /* Layout */
+    .container { max-width: 1200px; margin: 0 auto; padding: 20px; flex: 1; }
+    
+    /* Ticker */
+    .ticker-wrap { width: 100%; background: red; color: white; overflow: hidden; height: 38px; line-height: 38px; font-size: 13px; letter-spacing: 0.5px; }
+    .ticker { display: inline-block; white-space: nowrap; animation: ticker 30s linear infinite; padding-left: 100%; }
+    @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
+
+    /* --- SLIDER SECTION (REDUCED HEIGHT) --- */
+    .slider-container { 
+        position: relative; width: 100%; 
+        height: 140px; /* Reduced Mobile Height */
+        border-radius: 16px; overflow: hidden; margin-bottom: 30px; 
+        box-shadow: 0 8px 20px rgba(0,0,0,0.08); 
+    }
+    @media(min-width: 768px) { 
+        .slider-container { 
+            height: 250px; /* Reduced Desktop Height */
+        } 
+    }
+    
+    .slides-wrapper { display: flex; transition: transform 0.5s ease; height: 100%; }
+    .slide-item { min-width: 100%; height: 100%; }
+    .slide-item img { width: 100%; height: 100%; object-fit: cover; }
+    .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.9); border: none; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; font-size: 20px; z-index: 2; box-shadow: 0 4px 10px rgba(0,0,0,0.1); opacity: 0; transition: 0.3s; }
+    .slider-container:hover .nav-btn { opacity: 1; }
+    .prev-btn { left: 20px; } .next-btn { right: 20px; }
+
+    /* Chips */
+    .category-scroll { display: flex; overflow-x: auto; gap: 12px; padding: 5px 2px 15px 2px; margin-bottom: 10px; scrollbar-width: none; }
+    .chip { padding: 8px 20px; background: white; border: 1px solid #e5e5e5; border-radius: 30px; font-size: 14px; font-weight: 500; cursor: pointer; white-space: nowrap; transition: 0.2s; color: #555; }
+    .chip:hover { border-color: var(--primary); color: var(--primary); }
+    .chip.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 4px 12px rgba(255, 71, 87, 0.2); }
+
+    /* --- IMPROVED GRID & CARD --- */
+    .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    @media(min-width: 600px) { .grid { grid-template-columns: repeat(3, 1fr); gap: 24px; } }
+    @media(min-width: 1000px) { .grid { grid-template-columns: repeat(4, 1fr); } }
+    
+    .card { 
+        background: white; border-radius: 16px; overflow: hidden; 
+        border: 1px solid rgba(0,0,0,0.04); 
+        display: flex; flex-direction: column;
+        transition: transform 0.3s, box-shadow 0.3s;
+        position: relative;
+    }
+    .card:hover { transform: translateY(-6px); box-shadow: 0 12px 24px rgba(0,0,0,0.08); }
+
+    /* --- UPDATED IMAGE WRAPPER FOR FULL BLEED --- */
+    .card-img-wrap { 
+        position: relative; 
         width: 100%;
-        min-height: 100vh;
-        padding: 10px;
-        box-sizing: border-box;
-    }
-
-/* Subscribe Button */
-.subscribe-launch-box {
-    text-align: center;
-    padding: 15px;
-}
-.sub-launch-btn {
-    padding: 12px 18px;
-    background: linear-gradient(90deg, #ff6a00, #ee0979);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    font-weight: 600;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-/* Popup Modal Background */
-.modal {
-    display: none;
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.6);
-    justify-content: center;
-    align-items: center;
-    z-index: 5000;
-}
-
-/* Popup Content */
-.modal-content {
-    background: white;
-    padding: 25px;
-    border-radius: 14px;
-    width: 90%;
-    max-width: 360px;
-    text-align: center;
-    animation: popIn 0.3s ease-out;
-}
-
-/* Animation */
-@keyframes popIn {
-    from { transform: scale(0.7); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
-}
-
-/* Close Button */
-.close-btn {
-    float: right;
-    font-size: 24px;
-    cursor: pointer;
-}
-
-/* Popup Inputs */
-.modal-content input {
-    width: 100%;
-    padding: 12px;
-    margin: 10px 0;
-    font-size: 15px;
-    border: 1px solid #bbb;
-    border-radius: 8px;
-}
-
-/* Submit Button */
-.popup-submit {
-    width: 100%;
-    padding: 12px;
-    background: linear-gradient(90deg, #ff6a00, #ee0979);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-}
-
-
-    /* BOTTOM BAR (merged both sidebars) */
-    .bottom-bar {
-    width: 100%;
-    background: #fff;
-    padding: 12px 10px;
-    border-radius: 16px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    flex-wrap: wrap;
-    margin-top: 20px;
-    box-sizing: border-box;
-    }
-
-    .pill {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 10px 16px;
-        border-radius: 40px;
-        background: white;
-        cursor: pointer;
-        font-weight: 600;
-        transition: 0.3s;
-        text-decoration: none;
-        color: black;
-        font-size: 15px;
-        border: 1px solid #ddd;
- 	max-width: 140px;
-        white-space: nowrap;
-    }
-
-    .pill:hover { background: #e4e4e4; }
-
-    .pill img {
-        width: 24px;
-        height: 24px;
-        border-radius: 6px;
-    }
-
-    .content {
-        width: 100%;
-        padding: 20px;
-        border-radius: 20px;
+        height: 200px; 
         background: #fff;
-        box-shadow: 0 2px 12px rgba(0,0,0,0.1);
-    }
-
-    .filters {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 20px;
-    }
-
-    select, input {
-        padding: 12px 16px;
-        border-radius: 40px;
-        border: 1px solid #ccc;
-        font-size: 15px;
-        width: 100%;
-    }
-
-    .grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-        gap: 20px;
-    }
-
-    .card {
-        display: flex;
-        flex-direction: column;
-        background: #fff;
-        border-radius: 16px;
         overflow: hidden;
-        text-decoration: none;
-        color: black;
+    }
+    
+    /* --- UPDATED IMAGE TO FILL SPACE (EDGE TO EDGE) --- */
+    .card img { 
+        width: 100%; 
+        height: 100%; 
+        object-fit: cover; 
+        object-position: center;
+        transition: transform 0.5s;
+    }
+    
+    .card:hover img {
+        transform: scale(1.05);
+    }
+    
+    /* Discount Badge (Top Left) */
+    .discount-badge { 
+        position: absolute; top: 12px; left: 12px; 
+        background: #00b894; color: white; font-size: 11px; 
+        font-weight: 800; padding: 5px 10px; border-radius: 6px; 
+        box-shadow: 0 2px 6px rgba(0,184,148,0.3); z-index: 10;
+    }
+
+    .card-body { padding: 15px; display: flex; flex-direction: column; flex-grow: 1; }
+
+    /* Site Name Tag */
+    .site-tag {
+        align-self: flex-start;
+        font-size: 11px; font-weight: 700; text-transform: uppercase;
+        color: #636e72; background: #f1f2f6; 
+        padding: 4px 8px; border-radius: 4px;
+        margin-bottom: 8px; display: inline-block;
+    }
+    .site-tag.amazon { color: #d35400; background: #ffeaa7; }
+    .site-tag.flipkart { color: #0984e3; background: #dff9fb; }
+    .site-tag.myntra { color: #e84393; background: #fab1a0; }
+
+    .card-title { 
+        font-size: 14px; font-weight: 600; line-height: 1.4;
+        margin: 0 0 10px 0; color: var(--text-dark);
+        display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+        overflow: hidden; height: 40px; 
+    }
+    
+    .price-wrap { margin-bottom: 15px; }
+    
+    /* RED PRICE TEXT */
+    .current-price { 
+        font-weight: 800; 
+        font-size: 15px; 
+        color: #ff0000; /* Red Color */
+    }
+
+    /* Grab Deal Button */
+    .buy-btn { 
+        margin-top: auto; display: block; width: 100%; text-align: center; 
+        background: var(--orange-btn); color: white; text-decoration: none; 
+        padding: 12px; border-radius: 10px; font-weight: 700; font-size: 14px; 
+        transition: 0.3s; box-shadow: 0 4px 12px rgba(255, 159, 67, 0.25);
+    }
+    .buy-btn:hover { 
+        transform: translateY(-2px); box-shadow: 0 6px 16px rgba(255, 159, 67, 0.4); 
+    }
+
+    /* --- Fixed Marquee --- */
+    .marquee-section { margin-top: 50px; background: white; padding: 30px 0; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+    .marquee-title { text-align: center; margin-bottom: 25px; font-size: 18px; color: var(--text-dark); font-weight: 700; }
+    .marquee-container { width: 100%; overflow: hidden; }
+    .marquee-track { display: flex; gap: 40px; width: max-content; animation: scroll 35s linear infinite; padding-left: 20px; }
+    .marquee-track:hover { animation-play-state: paused; }
+    .brand-pill {
+        display: flex; align-items: center; justify-content: center;
+        background: #fff; border: 1px solid #eee; border-radius: 12px;
+        width: 130px; height: 75px; flex-shrink: 0;
         transition: 0.3s;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     }
+    .brand-pill:hover { transform: scale(1.05); border-color: #ddd; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+    .brand-pill img { max-width: 80%; max-height: 45px; object-fit: contain; }
 
-    .card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 14px rgba(0,0,0,0.2);
-    }
+    @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
-    .card img {
-        width: 100%;
-        height: 180px;
-        object-fit: cover;
-        loading: lazy;
-    }
+    /* Footer */
+    footer { background-color: #1e272e; color: #d2dae2; padding: 50px 20px 30px; margin-top: 60px; }
+    .footer-content { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; }
+    .footer-col h3 { color: white; margin-bottom: 20px; font-size: 18px; }
+    .footer-links a { display: block; color: #a4b0be; text-decoration: none; margin-bottom: 12px; font-size: 14px; transition: 0.2s; }
+    .footer-links a:hover { color: white; transform: translateX(5px); }
+    .copyright { text-align: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 30px; margin-top: 40px; font-size: 13px; color: #747d8c; }
 
-    .card-body { padding: 12px 15px; }
+    /* Utils */
+    .skeleton { background: linear-gradient(110deg, #ececec 8%, #f5f5f5 18%, #ececec 33%); background-size: 200% 100%; animation: shine 1.5s linear infinite; }
+    @keyframes shine { to { background-position-x: -200%; } }
+    .sk-card { height: 320px; border-radius: 16px; }
+    .pagination { display: flex; justify-content: center; gap: 15px; margin: 40px 0; }
+    .page-btn { padding: 10px 20px; border-radius: 8px; background: white; border: 1px solid #ddd; cursor: pointer; font-weight: 600; transition: 0.2s; }
+    .page-btn:hover:not(:disabled) { background: var(--primary); color: white; border-color: var(--primary); }
 
-    .title { font-size: 13px; font-weight: 600; margin-bottom: 6px; }
-    .price { font-size: 12px; font-weight: 600; color: #2ecc71; }
-    .discount { color: #e74c3c; font-size: 14px; }
-
-    .btn {
-        padding: 10px 0;
-        background: linear-gradient(90deg, #ff6a00, #ee0979);
-        color: #fff;
-        border-radius: 8px;
-        text-align: center;
-        margin-top: 10px;
-        display: block;
- 	text-decoration: none !important;
-    }
-.btn:hover {
-    text-decoration: none !important;
-}
-
-    .pagination { text-align: center; padding: 20px; }
-    .pagination button {
-        padding: 8px 14px;
-        border-radius: 8px;
-        background: #333;
-        color: #fff;
-        border: none;
-        cursor: pointer;
-        margin: 0 5px;
-    }
-
-    #loading {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 250px;
-        flex-direction: column;
-        gap: 10px;
-        font-size: 18px;
-    }
-
-    .spinner {
-        border: 5px solid #ddd;
-        border-top: 5px solid #3498db;
-        border-radius: 50%;
-        width: 45px;
-        height: 45px;
-        animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin { 100% { transform: rotate(360deg); } }
-
-.top-ticker-container {
-    width: 100%;
-    background: orange;
-    overflow: hidden;            /* keeps movement inside box */
-    padding: 10px 0;
-    position: sticky;
-    top: 0;
-    z-index: 2000;
-text-align: center;
-}
-.filters {
-    display: none !important;
-}
-
-.top-ticker {
-    display: inline-block;
-    white-space: nowrap;
-    color: black;
-    font-size: 15px;
-    font-weight: 600;
-    animation: bounce 20s ease-in-out infinite;
-}
-
-/* Back and forth animation */
-@keyframes bounce {
-    0%   { transform: translateX(0); }
-    50%  { transform: translateX(-50%); }
-    100% { transform: translateX(0); }
-}
-
-/* ---------- FULL WIDTH SLIDER ---------- */
-.full-slider {
-    position: relative;
-    width: 100%;
-    overflow: hidden;
-    margin: 20px 0;
-}
-
-.slides-wrapper {
-    display: flex;
-    transition: transform 0.4s ease-in-out;
-    width: 100%;
-}
-
-.slide-item {
-    min-width: 100%;
-    flex: 0 0 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.slide-item img {
-    width: 100%;
-    height: 240px;
-    object-fit: cover;
-    border-radius: 12px;
-}
-
-/* Navigation buttons */
-.nav-btn {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 10;
-    background: rgba(0, 0, 0, 0.5);
-    color: white;
-    border: none;
-    padding: 12px 18px;
-    font-size: 22px;
-    border-radius: 50%;
-    cursor: pointer;
-}
-
-.prev-btn { left: 10px; }
-.next-btn { right: 10px; }
-
-.nav-btn:hover {
-    background: rgba(0, 0, 0, 0.7);
-}
-html, body {
-    max-width: 100%;
-    overflow-x: hidden !important;
-}
-
-* {
-    box-sizing: border-box;
-}
-
+    .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 5000; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
+    .modal-content { background: white; padding: 40px; border-radius: 24px; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.2); animation: popIn 0.3s ease; }
+    @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .modal-close { position: absolute; top: 20px; right: 25px; font-size: 28px; cursor: pointer; color: #aaa; }
+    .modal input { width: 100%; padding: 14px; margin: 10px 0; border: 1px solid #eee; border-radius: 12px; background: #f9f9f9; outline: none; }
+    .modal input:focus { border-color: var(--primary); background: white; }
+    #toast { visibility: hidden; background: #333; color: white; padding: 12px 24px; border-radius: 50px; position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 6000; font-size: 14px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+    #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
+    
+    .mobile-search { display: block; margin-bottom: 25px; }
+    @media(min-width: 768px) { .mobile-search { display: none; } }
 </style>
 </head>
-
 <body>
+
+  <!-- Background Ambience -->
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+
 <header>
-    🔥 Today’s Best Offers
-
-    <div class="header-search">
-        <input type="text" id="topSearch" placeholder="Search products...">
+    <a href="#" class="logo">DealHunter</a>
+    <div class="search-container">
+        <span class="search-icon">🔍</span>
+        <input type="text" class="search-input" id="desktopSearch" placeholder="Search for products, brands...">
     </div>
-
-<!-- SUBSCRIBE BUTTON -->
-<div class="subscribe-launch-box">
-    <button class="sub-launch-btn" onclick="openSubscribe()">Subscribe</button>
-</div>
+    <div class="header-actions">
+        <button class="sub-btn" onclick="openSubscribe()">Subscribe</button>
+    </div>
 </header>
 
-<div class="layout">
-
-<div class="content">
-
-
-    <!-- 🔍 Search & Category Filter -->
-    <div class="filters">
-        <input type="text" id="searchInput" placeholder="Search products...">
-        <select id="categoryFilter">
-            <option value="all">All Categories</option>
-        </select>
-    </div>
-<div class="top-ticker-container">
-    <div class="top-ticker">
-         <center>Big Sale Live Now! | Amazon • Flipkart • Meesho • Myntra • Ajio • Croma • More Deals Updating Every Hour!</center>
+<div class="ticker-wrap">
+    <div class="ticker">
+        🔥 Flash Sale! Up to 80% OFF on Electronics, Fashion & Home | Amazon • Flipkart • Myntra • Ajio • New Deals Every Hour! 🔥
     </div>
 </div>
-<!-- ----------- FULL WIDTH SLIDER SECTION ----------- -->
-<div class="full-slider">
-    <button class="nav-btn prev-btn">⟨</button>
 
-    <div class="slides-wrapper" id="sheetGallery"></div>
-
-    <button class="nav-btn next-btn">⟩</button>
-</div>
-
-
-    <div id="loading">
-        <div class="spinner"></div>
-        Loading offers...
+<div class="container">
+    
+    <div class="mobile-search">
+        <div style="position:relative;">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="search-input" id="mobileSearch" placeholder="Search deals...">
+        </div>
     </div>
 
-    <div id="grid" class="grid" style="display:none;"></div>
+    <div class="slider-container">
+        <button class="nav-btn prev-btn">❮</button>
+        <div class="slides-wrapper" id="sliderWrapper">
+            <div class="slide-item skeleton"></div>
+        </div>
+        <button class="nav-btn next-btn">❯</button>
+    </div>
 
-    <div class="pagination">
-        <button onclick="prevPage()">Prev</button>
-        <span id="pageNumber"></span>
-        <button onclick="nextPage()">Next</button>
+    <div class="category-scroll" id="categoryWrapper">
+        <button class="chip active" onclick="filterCategory('all', this)">All Deals</button>
+    </div>
+
+    <div id="grid" class="grid">
+        <div class="card sk-card skeleton"></div>
+        <div class="card sk-card skeleton"></div>
+        <div class="card sk-card skeleton"></div>
+        <div class="card sk-card skeleton"></div>
+    </div>
+
+    <div class="pagination" id="paginationControls" style="display:none;">
+        <button class="page-btn" onclick="prevPage()" id="btnPrev">Prev</button>
+        <span id="pageIndicator" style="font-weight:600; color:#555; align-self:center;">1</span>
+        <button class="page-btn" onclick="nextPage()" id="btnNext">Next</button>
+    </div>
+
+    <!-- MARQUEE (Top Brands) -->
+    <div class="marquee-section">
+        <h3 class="marquee-title">Trusted Partners</h3>
+        <div class="marquee-container">
+            <div class="marquee-track">
+                <!-- Logos with fallbacks -->
+                <a class="brand-pill"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" alt="Amazon"></a>
+                <a class="brand-pill"><img src="https://upload.wikimedia.org/wikipedia/en/1/13/Flipkart_Logo.png" alt="Flipkart"></a>
+                <a class="brand-pill"><img src="https://upload.wikimedia.org/wikipedia/commons/b/bc/Myntra_Logo.png" alt="Myntra"></a>
+                <a class="brand-pill"><img src="https://assets.ajio.com/static/img/Ajio-Logo.svg" alt="Ajio"></a>
+                <a class="brand-pill"><img src="https://upload.wikimedia.org/wikipedia/commons/8/80/Meesho_Logo_Full.png" alt="Meesho"></a>
+                <a class="brand-pill"><img src="https://upload.wikimedia.org/wikipedia/commons/b/bd/Zomato_Logo.svg" alt="Zomato"></a>
+                <a class="brand-pill"><img src="https://upload.wikimedia.org/wikipedia/en/1/12/Swiggy_logo.svg" alt="Swiggy"></a>
+                <a class="brand-pill"><img src="https://upload.wikimedia.org/wikipedia/commons/d/d2/Dominos_pizza_logo_2021.svg" alt="Dominos"></a>
+                <a class="brand-pill"><img src="https://upload.wikimedia.org/wikipedia/commons/8/8d/MakeMyTrip_Logo.png" alt="MMT"></a>
+                <a class="brand-pill"><img src="https://upload.wikimedia.org/wikipedia/commons/2/28/HDFC_Bank_Logo.svg" alt="HDFC"></a>
+                
+                <!-- Duplicate for Loop -->
+                <a class="brand-pill"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" alt="Amazon"></a>
+                <a class="brand-pill"><img src="https://upload.wikimedia.org/wikipedia/en/1/13/Flipkart_Logo.png" alt="Flipkart"></a>
+                <a class="brand-pill"><img src="https://upload.wikimedia.org/wikipedia/commons/b/bc/Myntra_Logo.png" alt="Myntra"></a>
+                <a class="brand-pill"><img src="https://assets.ajio.com/static/img/Ajio-Logo.svg" alt="Ajio"></a>
+                <a class="brand-pill"><img src="https://upload.wikimedia.org/wikipedia/commons/8/80/Meesho_Logo_Full.png" alt="Meesho"></a>
+            </div>
+        </div>
     </div>
 
 </div>
 
-<!-- ⭐ Bottom Combined Bar -->
-<div class="bottom-bar">
-    <a class="pill"><img src="https://logo.clearbit.com/amazon.in">Amazon</a>
-    <a class="pill"><img src="https://logo.clearbit.com/flipkart.com">Flipkart</a>
-    <a class="pill"><img src="https://logo.clearbit.com/meesho.com">Meesho</a>
-    <a class="pill"><img src="https://logo.clearbit.com/swiggy.com">Swiggy</a>
-    <a class="pill"><img src="https://logo.clearbit.com/zomato.com">Zomato</a>
-</div>
+<footer>
+    <div class="footer-content">
+        <div class="footer-col">
+            <h3>DealHunter</h3>
+            <p>Your ultimate destination for the hottest deals, coupons, and offers from India's top online stores.</p>
+        </div>
+        <div class="footer-col footer-links">
+            <h3>Explore</h3>
+            <a href="#">Today's Top Deals</a>
+            <a href="#">Electronics</a>
+            <a href="#">Fashion</a>
+        </div>
+        <div class="footer-col footer-links">
+            <h3>Help</h3>
+            <a href="#">Contact Us</a>
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms & Conditions</a>
+        </div>
+    </div>
+    <div class="copyright">&copy; 2024 DealHunter. All Rights Reserved.</div>
+</footer>
 
+<div id="subscribeModal" class="modal">
+    <div class="modal-content">
+        <span class="modal-close" onclick="closeSubscribe()">×</span>
+        <h2>🚀 Never Miss a Deal!</h2>
+        <p style="color:#666; font-size:14px; margin-bottom:20px;">Get the best offers delivered to your inbox.</p>
+        <input type="email" id="popupEmail" placeholder="Enter your email">
+        <input type="tel" id="popupMobile" placeholder="Enter mobile number" maxlength="10">
+        <button class="sub-btn" style="width:100%; margin-top:15px; font-size:16px;" onclick="submitSubscribe()">Join Now</button>
+    </div>
 </div>
+<div id="toast">Message here</div>
 
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbzQmZMbBQc6ChYGmhcLNeQmsSmYX1U4XBXOTc0vcrLAmXLa3XAWdnOvZowmCzW0tNAZjg/exec";
-
-let offers = [];
-let currentPage = 1;
-const itemsPerPage = 12;
-
-window.onload = async () => loadOffers();
-
-/* Fetch Offers */
-async function loadOffers() {
-    document.getElementById("loading").style.display = "flex";
-
-    const res = await fetch(API_URL);
-    offers = await res.json();
-
-    buildCategoryList();
-    render();
-
-    document.getElementById("loading").style.display = "none";
-    document.getElementById("grid").style.display = "grid";
-}
-
-/* Build Category Dropdown */
-function buildCategoryList() {
-    const select = document.getElementById("categoryFilter");
-    const categories = [...new Set(offers.map(x => x.category))];
-
-    categories.forEach(cat => {
-        const opt = document.createElement("option");
-        opt.value = cat;
-        opt.textContent = cat;
-        select.appendChild(opt);
-    });
-}
-
-/* Render Cards */
-function render() {
-    const search = document.getElementById("searchInput").value.toLowerCase();
-    const selectedCat = document.getElementById("categoryFilter").value;
-
-    let filtered = offers;
-
-    if (search) {
-        filtered = filtered.filter(i => i.title.toLowerCase().includes(search));
-    }
-
-    if (selectedCat !== "all") {
-        filtered = filtered.filter(i => i.category === selectedCat);
-    }
-
-    const start = (currentPage - 1) * itemsPerPage;
-    const paginated = filtered.slice(start, start + itemsPerPage);
-
-    document.getElementById("grid").innerHTML =
-        paginated.map(item => `
-        <div class="card">
-            <img src="${item.image}">
-            <div class="card-body">
-                <div class="title">${item.title}</div>
-                <div class="price">${item.price}</div>
-                <div class="discount">${item.discount}</div>
-                <a class="btn" href="${item.link}" target="_blank">Grab Deal</a>
-            </div>
-        </div>`).join("");
-
-    document.getElementById("pageNumber").innerText = `Page ${currentPage}`;
-}
-
-/* Pagination */
-function nextPage() { currentPage++; render(); }
-function prevPage() { if (currentPage > 1) currentPage--; render(); }
-
-/* Search + Filter */
-document.getElementById("searchInput").addEventListener("input", () => {
-    currentPage = 1;
-    render();
-});
-
-document.getElementById("topSearch").addEventListener("input", () => {
-    document.getElementById("searchInput").value = 
-        document.getElementById("topSearch").value;
-
-    currentPage = 1;
-    render();
-});
-
-document.getElementById("categoryFilter").addEventListener("change", () => {
-    currentPage = 1;
-    render();
-});
-
-let currentSlide = 0;
-let autoSlideInterval;
-
-async function loadFullWidthSlider() {
-    const url = "https://script.google.com/macros/s/AKfycbxrfAb4mxPttSX8YUtXqnamvH1d3H2s1SosRJtG_CU--0chR5eWCogTHFQRLVpl3c1Veg/exec";
-
-    try {
-        const res = await fetch(url);
-        const data = await res.json();
-
-        const gallery = document.getElementById("sheetGallery");
-        gallery.innerHTML = "";
-
-        data.forEach(item => {
-            const div = document.createElement("div");
-            div.className = "slide-item";
-
-            const a = document.createElement("a");
-            a.href = item.link;
-            a.target = "_blank";
-
-            const img = document.createElement("img");
-            img.src = item.image;
-
-            a.appendChild(img);
-            div.appendChild(a);
-            gallery.appendChild(div);
-        });
-
-        enableSlider(data.length);
-    } catch (error) {
-        console.error("Error loading slider:", error);
-    }
-}
-
-function enableSlider(totalSlides) {
-    const wrapper = document.querySelector(".slides-wrapper");
-
-    // Update slide function
-    function updateSlide() {
-        wrapper.style.transform = `translateX(-${currentSlide * 100}%)`;
-    }
-
-    // Button click events
-    document.querySelector(".prev-btn").onclick = () => {
-        currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
-        updateSlide();
-        resetAutoSlide();
-    };
-
-    document.querySelector(".next-btn").onclick = () => {
-        currentSlide = (currentSlide + 1) % totalSlides;
-        updateSlide();
-        resetAutoSlide();
-    };
-
-    // Auto-slide every 3 seconds
-    autoSlideInterval = setInterval(() => {
-        currentSlide = (currentSlide + 1) % totalSlides;
-        updateSlide();
-    }, 3000);
-}
-
-// Reset auto-slide on manual navigation
-function resetAutoSlide() {
-    clearInterval(autoSlideInterval);
-    autoSlideInterval = setInterval(() => {
-        currentSlide = (currentSlide + 1) % totalSlides;
-        document.querySelector(".slides-wrapper").style.transform = `translateX(-${currentSlide * 100}%)`;
-    }, 3000);
-}
-
-loadFullWidthSlider();
-
-function openSubscribe() {
-    document.getElementById("subscribeModal").style.display = "flex";
-}
-
-function closeSubscribe() {
-    document.getElementById("subscribeModal").style.display = "none";
-}
-
-function submitSubscribe() {
-    const email = document.getElementById("popupEmail").value.trim();
-    const mobile = document.getElementById("popupMobile").value.trim();
-
-    if (!email.includes("@")) {
-        alert("Enter a valid email");
-        return;
-    }
-    if (!/^[0-9]{10}$/.test(mobile)) {
-        alert("Enter a valid 10-digit mobile number");
-        return;
-    }
-
-    alert("Subscription successful!");
-    closeSubscribe();
-}
-
+const SLIDER_API = "https://script.google.com/macros/s/AKfycbxrfAb4mxPttSX8YUtXqnamvH1d3H2s1SosRJtG_CU--0chR5eWCogTHFQRLVpl3c1Veg/exec";
 const SUBSCRIBE_API = "https://script.google.com/macros/s/AKfycbxdzkBdlY2EWha9eRd6x7Wa3DfV_mJtkVSoBJ-GP_RpyEKXU8YdPd1JmlQboxwPmRYa/exec";
 
-async function submitSubscribe() {
-    const email = document.getElementById("popupEmail").value.trim();
-    const mobile = document.getElementById("popupMobile").value.trim();
+let allOffers = [], filteredOffers = [], currentPage = 1, itemsPerPage = 12, currentCategory = 'all';
 
-    if (!email.includes("@")) {
-        alert("Enter a valid email");
-        return;
+window.onload = () => {
+    loadSlider();
+    loadOffers();
+    setTimeout(() => {
+        if (!sessionStorage.getItem('popupShown')) {
+            openSubscribe();
+            sessionStorage.setItem('popupShown', 'true');
+        }
+    }, 2000);
+};
+
+async function loadOffers() {
+    try {
+        const res = await fetch(API_URL);
+        allOffers = await res.json();
+        
+        // Build Categories
+        const categories = [...new Set(allOffers.map(x => x.category))];
+        const catWrapper = document.getElementById("categoryWrapper");
+        categories.forEach(cat => {
+            if(cat) {
+                const btn = document.createElement("button");
+                btn.className = "chip"; btn.innerText = cat;
+                btn.onclick = () => filterCategory(cat, btn);
+                catWrapper.appendChild(btn);
+            }
+        });
+
+        filteredOffers = allOffers; 
+        renderGrid();
+        document.getElementById("paginationControls").style.display = "flex";
+    } catch (e) { 
+        document.getElementById("grid").innerHTML = `<div style="text-align:center; grid-column:1/-1; padding:50px;">Failed to load offers. Please try again later.</div>`; 
     }
-    if (!/^[0-9]{10}$/.test(mobile)) {
-        alert("Enter a valid 10-digit mobile number");
-        return;
-    }
-
-    // Send to Google Sheet
-    const response = await fetch(SUBSCRIBE_API, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, mobile })
-    });
-
-    alert("Subscription saved!");
-    closeSubscribe();
-
-    document.getElementById("popupEmail").value = "";
-    document.getElementById("popupMobile").value = "";
 }
 
+// Helper to determine site name from URL
+function getSiteName(link) {
+    if(!link) return 'Offer';
+    const l = link.toLowerCase();
+    if(l.includes('amazon')) return 'Amazon';
+    if(l.includes('flipkart')) return 'Flipkart';
+    if(l.includes('meesho')) return 'Meesho';
+    if(l.includes('myntra')) return 'Myntra';
+    if(l.includes('ajio')) return 'Ajio';
+    if(l.includes('tatacliq')) return 'TataCliq';
+    if(l.includes('nykaa')) return 'Nykaa';
+    if(l.includes('zomato')) return 'Zomato';
+    if(l.includes('swiggy')) return 'Swiggy';
+    return 'Store';
+}
+
+function renderGrid() {
+    const grid = document.getElementById("grid");
+    grid.innerHTML = "";
+    
+    const start = (currentPage - 1) * itemsPerPage;
+    const pageItems = filteredOffers.slice(start, start + itemsPerPage);
+
+    if(pageItems.length === 0) { 
+        grid.innerHTML = "<p style='grid-column: 1/-1; text-align:center; padding:50px;'>No products found matching your search.</p>"; 
+        return; 
+    }
+
+    pageItems.forEach(item => {
+        // Detect Site Name
+        const siteName = getSiteName(item.link);
+        const lowerSite = siteName.toLowerCase();
+
+        grid.innerHTML += `
+        <div class="card">
+            <div class="card-img-wrap">
+                <!-- Red Discount Badge -->
+                <span class="discount-badge">${item.discount || 'Sale'}</span>
+                <img src="${item.image}" alt="${item.title}" loading="lazy">
+            </div>
+            <div class="card-body">
+                <!-- Site Name Pill (Always Visible) -->
+                <span class="site-tag ${lowerSite}">${siteName}</span>
+                
+                <h3 class="card-title">${item.title}</h3>
+                
+                <div class="price-wrap">
+                    <span class="current-price">${item.price}</span>
+                </div>
+                
+                <a href="${item.link}" target="_blank" class="buy-btn">Grab Deal →</a>
+            </div>
+        </div>`;
+    });
+
+    document.getElementById("pageIndicator").innerText = `Page ${currentPage} of ${Math.ceil(filteredOffers.length / itemsPerPage)}`;
+    document.getElementById("btnPrev").disabled = currentPage === 1;
+    document.getElementById("btnNext").disabled = currentPage >= Math.ceil(filteredOffers.length / itemsPerPage);
+}
+
+function filterCategory(cat, btnElement) {
+    currentCategory = cat; currentPage = 1;
+    document.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
+    if(btnElement) btnElement.classList.add("active");
+    applyFilters();
+}
+
+const handleSearch = (e) => {
+    const query = e.target.value.toLowerCase();
+    document.getElementById("desktopSearch").value = query;
+    document.getElementById("mobileSearch").value = query;
+    applyFilters(query);
+};
+document.getElementById("desktopSearch").addEventListener("input", handleSearch);
+document.getElementById("mobileSearch").addEventListener("input", handleSearch);
+
+function applyFilters(query = "") {
+    const q = query || document.getElementById("desktopSearch").value.toLowerCase();
+    filteredOffers = allOffers.filter(item => {
+        const matchesCat = (currentCategory === 'all' || item.category === currentCategory);
+        const matchesSearch = item.title.toLowerCase().includes(q);
+        return matchesCat && matchesSearch;
+    });
+    currentPage = 1; renderGrid();
+}
+
+function nextPage() { if (currentPage < Math.ceil(filteredOffers.length / itemsPerPage)) { currentPage++; renderGrid(); window.scrollTo({top: 500, behavior: 'smooth'}); } }
+function prevPage() { if (currentPage > 1) { currentPage--; renderGrid(); window.scrollTo({top: 500, behavior: 'smooth'}); } }
+
+/* Slider Logic */
+async function loadSlider() {
+    try {
+        const res = await fetch(SLIDER_API); const data = await res.json();
+        const wrapper = document.getElementById("sliderWrapper"); wrapper.innerHTML = "";
+        data.forEach(slide => {
+            const div = document.createElement("div"); div.className = "slide-item";
+            div.innerHTML = `<a href="${slide.link}" target="_blank"><img src="${slide.image}" alt="Deal"></a>`;
+            wrapper.appendChild(div);
+        });
+        initSlider(data.length);
+    } catch(e) { console.log("Slider Error"); }
+}
+
+function initSlider(count) {
+    let current = 0; const wrapper = document.getElementById("sliderWrapper");
+    const move = (idx) => { current = (idx < 0) ? count - 1 : (idx >= count) ? 0 : idx; wrapper.style.transform = `translateX(-${current * 100}%)`; };
+    document.querySelector(".prev-btn").onclick = () => { move(current - 1); resetTimer(); };
+    document.querySelector(".next-btn").onclick = () => { move(current + 1); resetTimer(); };
+    let timer = setInterval(() => move(current + 1), 4000);
+    function resetTimer() { clearInterval(timer); timer = setInterval(() => move(current + 1), 4000); }
+}
+
+/* Modal */
+function openSubscribe() { document.getElementById("subscribeModal").style.display = "flex"; }
+function closeSubscribe() { document.getElementById("subscribeModal").style.display = "none"; }
+window.onclick = (e) => { if(e.target == document.getElementById("subscribeModal")) closeSubscribe(); }
+
+function showToast(msg) {
+    const x = document.getElementById("toast"); x.innerText = msg; x.className = "show";
+    setTimeout(() => { x.className = x.className.replace("show", ""); }, 3000);
+}
+
+async function submitSubscribe() {
+    const email = document.getElementById("popupEmail").value;
+    const mobile = document.getElementById("popupMobile").value;
+    if(!email.includes("@") || mobile.length < 10) { showToast("Please enter valid details"); return; }
+    
+    const btn = document.querySelector(".modal-content .sub-btn"); 
+    const originalText = btn.innerText;
+    btn.innerText = "Subscribing...";
+    
+    try {
+        await fetch(SUBSCRIBE_API, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, mobile }) });
+        showToast("✅ Successfully Subscribed!"); closeSubscribe();
+    } catch(e) { showToast("❌ Error occurred"); } finally { btn.innerText = originalText; }
+}
 </script>
-<div id="subscribeModal" class="modal">
-    <div class="modal-content">
-        <span class="close-btn" onclick="closeSubscribe()">×</span>
-
-        <h2>Subscribe for Best Deals</h2>
-
-        <input type="email" id="popupEmail" placeholder="Enter your email">
-
-        <input type="tel" id="popupMobile" placeholder="Enter mobile number" maxlength="10">
-
-        <button class="popup-submit" onclick="submitSubscribe()">Submit</button>
-    </div>
-</div>
 </body>
 </html>
